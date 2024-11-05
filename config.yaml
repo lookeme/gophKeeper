@@ -1,0 +1,14 @@
+---
+listen_address: 127.0.0.1:50051
+database:
+  postgres:
+    connection_string: "postgres://localhost:5432/gkeeper?sslmode=disable"
+blockstore:
+  s3:
+    force_path_style: true
+    endpoint: 127.0.0.1:9000
+    bucket: storage
+    access_key_id: minioadmin
+    secret_access_key: minioadmin
+logger:
+  level: debug

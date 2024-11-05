@@ -1,0 +1,107 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "gkeeper/pb";
+
+import "google/protobuf/empty.proto";
+
+
+service FileManagerService {
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc UploadFileByChunks(stream FileChunk) returns (UploadStatus);
+  rpc DownloadFile (DownloadRequest) returns (stream DownloadResponse);
+  rpc UploadFile(stream FileChunk) returns (UploadStatus);
+  rpc CreateUser (CreateUserRequest) returns (CreateUserResponse);
+  rpc ListUserFiles(google.protobuf.Empty) returns (ListUserFileResponse);
+  rpc SaveCredentials(SaveCredentialsRequest) returns (SaveCredentialsResponse);
+  rpc GetAllCreds(google.protobuf.Empty) returns (AllCredsResponse);
+
+}
+
+
+message LoginRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string message = 1; // Response message indicating login success or failure
+}
+
+
+
+message FileChunk {
+  string filename = 1;
+  bytes chunk = 2;
+  int64 fileSize = 3;
+  int64 chunkSize = 4;
+}
+
+message UploadStatus {
+  bool success = 1;
+  string message = 2;
+  double progress = 3;
+  int32 part_number = 4;
+  string versionID = 5;
+}
+
+
+
+message FileObject {
+  string fileName = 1;
+  string Key = 2;
+  string VersionID = 3;
+  bool   IsLatest = 4;
+  int64  Size = 5;
+}
+message ListUserFileResponse {
+    repeated FileObject objects = 1;
+}
+// Request message for creating a user
+message CreateUserRequest {
+  string username = 1;
+  string email = 2;
+  string password = 3;
+}
+
+// Response message for creating a user
+message CreateUserResponse {
+  string id = 1;
+  string username = 2;
+}
+
+// Request message for creating a user
+message SaveCredentialsRequest {
+  string name = 1;
+  string username = 2;
+  string password = 3;
+}
+
+// Request message for creating a user
+message GetCredentialsResponse {
+  string name = 1;
+  string data = 2;
+  string version = 3;
+  string createDate = 4;
+}
+
+// Request message for creating a user
+message SaveCredentialsResponse {
+  string message = 1;
+}
+
+message AllCredsResponse {
+  repeated GetCredentialsResponse creds = 1;
+}
+
+message DownloadRequest {
+  string filename = 1;
+}
+
+message DownloadResponse {
+  bytes chunk = 1;
+}
+
+
+//  protoc --go_out=. --go-grpc_out=. service.proto
